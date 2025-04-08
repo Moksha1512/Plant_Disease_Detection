@@ -5,6 +5,8 @@ import joblib
 from torchvision import transforms
 from vit_model import ViTForClassfication  
 from io import BytesIO
+
+# Configuration for ViT model
 config = {
     "patch_size": 4,
     "hidden_size": 96,
@@ -21,20 +23,19 @@ config = {
     "use_faster_attention": True,
 }
 
-
 # Function to load the model and weights
-def load_model(model, weights_path, device):
+@st.cache_resource  # Cache the model and weights
+def load_model_and_encoder(weights_path, encoder_path, device):
+    model = ViTForClassfication(config)
     checkpoint = torch.load(weights_path, map_location=device)
     state_dict = checkpoint.get('model_state_dict', checkpoint)
     model.load_state_dict(state_dict, strict=False)
     model.to(device)
     model.eval()
-    print(f"Model weights loaded from {weights_path}")
-    return model
 
-# Function to load label encoder
-def load_label_encoder(encoder_path):
-    return joblib.load(encoder_path)
+    label_encoder = joblib.load(encoder_path)
+
+    return model, label_encoder
 
 # Function to predict the class of an image
 def predict_image(image, model, label_encoder, device):
@@ -63,21 +64,20 @@ st.write("Upload an image of a plant leaf to classify its disease.")
 # File uploader widget
 uploaded_file = st.file_uploader("Choose a plant leaf image...", type=["jpg", "jpeg", "png"])
 
+# Load model and label encoder once
+device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+weights_path = "plant_disease_vit_checkpoint_epoch_26.pt"  # Path to model weights
+encoder_path = "label_encoder.pkl"  # Path to label encoder
+
+model, label_encoder = load_model_and_encoder(weights_path, encoder_path, device)
+
 if uploaded_file is not None:
     # Display uploaded image
     image = Image.open(uploaded_file).convert("RGB")
     st.image(image, caption="Uploaded Image", use_column_width=True)
     
-    # Load model and label encoder (this will be done only once)
-    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-    model = ViTForClassfication(config)  # Replace with your model's config
-    weights_path = "plant_disease_vit_checkpoint_epoch_26.pt"  # Path to model weights
-    encoder_path = "label_encoder.pkl"  # Path to label encoder
-    
-    model = load_model(model, weights_path, device)
-    label_encoder = load_label_encoder(encoder_path)
-
     # Make a prediction
     if st.button('Classify'):
-        predicted_label = predict_image(image, model, label_encoder, device)
-        st.write(f"Predicted Disease: {predicted_label}")
+        with st.spinner('Classifying...'):
+            predicted_label = predict_image(image, model, label_encoder, device)
+            st.write(f"Predicted Disease: {predicted_label}")
