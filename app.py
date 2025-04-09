@@ -68,7 +68,7 @@ if selected == "ViT Model":
 
     if uploaded_file:
         image = Image.open(uploaded_file).convert("RGB")
-        st.image(image, caption="Uploaded Image", use_column_width=True)
+        st.image(image, caption="Uploaded Image", use_container_width=True)
 
         if st.button("🔍 Classify with ViT"):
             transform = transforms.Compose([
@@ -84,7 +84,8 @@ if selected == "ViT Model":
                 _, pred_idx = torch.max(probs, 1)
                 label = vit_encoder.inverse_transform(pred_idx.cpu().numpy())[0]
             st.success(f"🧠 Predicted Disease: **{label}**")
-            
+
+# ==== CNN + Attention Page ====
 elif selected == "CNN+Attention Model":
     st.title("🌿 Plant Disease Classification (CNN + Attention)")
 
@@ -108,7 +109,7 @@ elif selected == "CNN+Attention Model":
 
     if uploaded_file:
         img = Image.open(uploaded_file).convert('RGB')
-        st.image(img, caption='Uploaded Leaf Image', use_column_width=True)
+        st.image(img, caption='Uploaded Leaf Image', use_container_width=True)
 
         img = img.resize(IMAGE_SIZE)
         img_array = np.array(img) / 255.0
@@ -120,7 +121,7 @@ elif selected == "CNN+Attention Model":
 
         st.markdown(f"### ✅ Prediction: **{predicted_class}**")
         st.markdown(f"**Confidence:** {confidence:.2%}")
-        
+
 # ==== VAE Model Page ====
 elif selected == "VAE Model":
     st.title("🌿 Plant Disease Classification (VAE-based Model)")
@@ -150,7 +151,7 @@ elif selected == "VAE Model":
 
     if uploaded_file:
         image = Image.open(uploaded_file).convert("RGB")
-        st.image(image, caption="Uploaded Image", use_column_width=True)
+        st.image(image, caption="Uploaded Image", use_container_width=True)
 
         if st.button("🔍 Classify with VAE"):
             transform = transforms.Compose([
@@ -165,7 +166,7 @@ elif selected == "VAE Model":
                 pred_class = torch.argmax(output, dim=1).item()
                 st.success(f"🧠 Predicted Disease: **{class_names[pred_class]}**")
 
-# ---------------------------------- SIFT + KMeans ----------------------------------
+# ==== SIFT + KMeans Model Page ====
 elif selected == "SIFT + KMeans Model":
     st.title("🧠 SIFT + KMeans Image Classification")
 
@@ -199,7 +200,7 @@ elif selected == "SIFT + KMeans Model":
 
     if uploaded_file:
         image = Image.open(uploaded_file).convert("RGB")
-        st.image(image, caption="Uploaded Image", use_column_width=True)
+        st.image(image, caption="Uploaded Image", use_container_width=True)
 
         image_np = np.array(image)
         pred = predict_class_from_image(image_np)
