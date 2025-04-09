@@ -7,6 +7,8 @@ import tensorflow as tf
 import numpy as np
 import os
 from torchvision import transforms
+import cv2
+from tensorflow.keras.preprocessing.sequence import pad_sequences
 
 # ==== Imports from folders ====
 from Plant_Disease_Detection.vit_model import ViTForClassfication
