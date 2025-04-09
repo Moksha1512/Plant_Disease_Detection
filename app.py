@@ -94,7 +94,7 @@ elif selected == "CNN+Attention Model":
 
     @st.cache_resource
     def load_tf_model():
-        model = tf.keras.models.load_model("plant_disease_model.h5", compile=False)
+        model = tf.keras.models.load_model("CNN_ATTENTION/plant_disease_model.h5", compile=False)
         return model
 
     cnn_model = load_tf_model()
