@@ -113,7 +113,3 @@ if uploaded_file is not None:
             st.success(f"**Prediction Successful!** The disease is: {predicted_label}")
 
 # Add a footer or additional information
-st.markdown("""
-    ---
-    Built with ❤️ by [Your Name](#) | [Source Code](#)
-""")
