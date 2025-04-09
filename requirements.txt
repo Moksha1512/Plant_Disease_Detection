@@ -1,0 +1,9 @@
+streamlit
+Pillow
+torch
+torchvision
+joblib
+scikit-learn
+matplotlib
+seaborn
+tensorflow
