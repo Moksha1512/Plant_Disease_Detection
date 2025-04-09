@@ -8,3 +8,4 @@ matplotlib
 seaborn
 tensorflow
 streamlit-option-menu
+numpy
