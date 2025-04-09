@@ -9,3 +9,4 @@ seaborn
 tensorflow
 streamlit-option-menu
 numpy
+opencv-python-headless
