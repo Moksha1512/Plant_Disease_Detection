@@ -69,6 +69,11 @@ device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 weights_path = "plant_disease_vit_checkpoint_epoch_26.pt"  # Path to model weights
 encoder_path = "label_encoder.pkl"  # Path to label encoder
 
+if not os.path.exists(weights_path):
+    st.error(f"Model weights file not found: {weights_path}")
+if not os.path.exists(encoder_path):
+    st.error(f"Label encoder file not found: {encoder_path}")
+
 model, label_encoder = load_model_and_encoder(weights_path, encoder_path, device)
 
 if uploaded_file is not None:
