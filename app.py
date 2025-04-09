@@ -21,8 +21,8 @@ st.set_page_config(page_title="Plant Disease Detection App", layout="wide")
 with st.sidebar:
     selected = option_menu(
         menu_title="Navigation",
-        options=["ViT Model", "VAE Model", "CNN+Attention Model"],
-        icons=["activity", "cpu", "image"],
+        options=["ViT Model", "VAE Model", "CNN+Attention Model", "SIFT + KMeans Model"],
+        icons=["activity", "cpu", "image", "bounding-box"],
         default_index=0,
     )
 
@@ -162,3 +162,44 @@ elif selected == "VAE Model":
                 output = classifier(encoded)
                 pred_class = torch.argmax(output, dim=1).item()
                 st.success(f"🧠 Predicted Disease: **{class_names[pred_class]}**")
+
+# ---------------------------------- SIFT + KMeans ----------------------------------
+elif selected == "SIFT + KMeans Model":
+    st.title("🧠 SIFT + KMeans Image Classification")
+
+    @st.cache_resource
+    def load_sift_kmeans():
+        scaler = joblib.load('sift+kmeans/scaler.pkl')
+        pca = joblib.load('sift+kmeans/pca_transform.pkl')
+        kmeans_model = joblib.load('sift+kmeans/kmeans_model.pkl')
+        cluster_class_mapping = joblib.load('sift+kmeans/cluster_class_mapping.pkl')
+        return scaler, pca, kmeans_model, cluster_class_mapping
+
+    scaler, pca, kmeans_model, cluster_class_mapping = load_sift_kmeans()
+    sift = cv2.SIFT_create(nfeatures=100)
+    max_length = 100
+
+    def predict_class_from_image(image):
+        gray_image = cv2.cvtColor(image, cv2.COLOR_RGB2GRAY)
+        keypoints, descriptors = sift.detectAndCompute(gray_image, None)
+
+        if descriptors is None:
+            return "No features found."
+
+        padded = pad_sequences([descriptors], maxlen=max_length, padding='post', truncating='post', dtype='float32')
+        flat = padded.reshape((1, -1))
+        scaled = scaler.transform(flat)
+        reduced = pca.transform(scaled)
+        predicted_cluster = kmeans_model.predict(reduced)[0]
+        return cluster_class_mapping.get(predicted_cluster, "Unknown")
+
+    uploaded_file = st.file_uploader("📷 Upload an image", type=["jpg", "jpeg", "png"], key="sift_upload")
+
+    if uploaded_file:
+        image = Image.open(uploaded_file).convert("RGB")
+        st.image(image, caption="Uploaded Image", use_column_width=True)
+
+        image_np = np.array(image)
+        pred = predict_class_from_image(image_np)
+
+        st.success(f"🧠 Predicted Class: **{pred}**")
