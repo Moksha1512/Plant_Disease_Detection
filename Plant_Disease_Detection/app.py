@@ -1,6 +1,7 @@
 import streamlit as st
 from PIL import Image
 import torch
+import os
 import joblib
 from torchvision import transforms
 from vit_model import ViTForClassfication  
