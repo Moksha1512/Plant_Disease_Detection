@@ -18,8 +18,8 @@ st.set_page_config(page_title="Plant Disease Detection App", layout="wide")
 with st.sidebar:
     selected = option_menu(
         menu_title="Navigation",
-        options=["ViT Model", "VAE Model"],
-        icons=["activity", "cpu"],
+        options=["ViT Model", "VAE Model", "CNN+Attention Model"],
+        icons=["activity", "cpu", "image"],
         default_index=0,
     )
 
