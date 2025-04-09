@@ -4,8 +4,7 @@ import torch
 import os
 import joblib
 from torchvision import transforms
-from vit_model import ViTForClassfication  
-from io import BytesIO
+from vit_model import ViTForClassfication
 
 # Configuration for ViT model
 config = {
@@ -59,31 +58,62 @@ def predict_image(image, model, label_encoder, device):
     return predicted_label[0]
 
 # Streamlit app layout
-st.title("Plant Disease Classification")
-st.write("Upload an image of a plant leaf to classify its disease.")
+st.set_page_config(page_title="Plant Disease Classification", layout="wide")
+
+# Add title and description
+st.title("🌿 Plant Disease Classification 🌿")
+st.markdown("""
+    Upload an image of a plant leaf to classify its disease.
+    **Note:** Ensure the image is clear for better predictions.
+""")
+
+# Add some custom styling for the app
+st.markdown("""
+    <style>
+        .css-ffhzg2 {
+            padding-top: 10px;
+            text-align: center;
+        }
+        .stButton>button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 24px;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        .stButton>button:hover {
+            background-color: #45a049;
+        }
+    </style>
+""", unsafe_allow_html=True)
 
 # File uploader widget
-uploaded_file = st.file_uploader("Choose a plant leaf image...", type=["jpg", "jpeg", "png"])
+uploaded_file = st.file_uploader("Choose a plant leaf image...", type=["jpg", "jpeg", "png"], label_visibility="collapsed")
 
 # Load model and label encoder once
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 weights_path = "Plant_Disease_Detection/plant_disease_vit_checkpoint_epoch_26.pt"  # Path to model weights
 encoder_path = "Plant_Disease_Detection/label_encoder.pkl"  # Path to label encoder
 
-# if not os.path.exists(weights_path):
-#     st.error(f"Model weights file not found: {weights_path}")
-# if not os.path.exists(encoder_path):
-#     st.error(f"Label encoder file not found: {encoder_path}")
-
+# Load model and encoder
 model, label_encoder = load_model_and_encoder(weights_path, encoder_path, device)
 
 if uploaded_file is not None:
-    # Display uploaded image
+    # Display uploaded image in a nice frame
     image = Image.open(uploaded_file).convert("RGB")
     st.image(image, caption="Uploaded Image", use_column_width=True)
-    
-    # Make a prediction
-    if st.button('Classify'):
+
+    # Prediction button
+    if st.button('Classify Disease'):
         with st.spinner('Classifying...'):
             predicted_label = predict_image(image, model, label_encoder, device)
-            st.write(f"Predicted Disease: {predicted_label}")
+            st.markdown(f"### Predicted Disease: **{predicted_label}**")
+            st.success(f"**Prediction Successful!** The disease is: {predicted_label}")
+
+# Add a footer or additional information
+st.markdown("""
+    ---
+    Built with ❤️ by [Your Name](#) | [Source Code](#)
+""")
