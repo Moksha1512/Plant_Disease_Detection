@@ -79,7 +79,43 @@ if selected == "ViT Model":
                 _, pred_idx = torch.max(probs, 1)
                 label = vit_encoder.inverse_transform(pred_idx.cpu().numpy())[0]
             st.success(f"🧠 Predicted Disease: **{label}**")
+            
+elif selected == "CNN+Attention Model":
+    st.title("🌿 Plant Disease Classification (CNN + Attention)")
 
+    CLASS_LABELS = [
+        'Pepper__bell___Bacterial_spot', 'Pepper__bell___healthy', 'Potato___Early_blight', 'Potato___Late_blight',
+        'Potato___healthy', 'Tomato_Bacterial_spot', 'Tomato_Early_blight', 'Tomato_Late_blight', 'Tomato_Leaf_Mold', 
+        'Tomato_Septoria_leaf_spot', 'Tomato_Spider_mites_Two_spotted_spider_mite', 'Tomato__Target_Spot', 
+        'Tomato__Tomato_YellowLeaf__Curl_Virus', 'Tomato__Tomato_mosaic_virus', 'Tomato_healthy'
+    ]
+
+    IMAGE_SIZE = (128, 128)
+
+    @st.cache_resource
+    def load_tf_model():
+        model = tf.keras.models.load_model("plant_disease_model.h5", compile=False)
+        return model
+
+    cnn_model = load_tf_model()
+
+    uploaded_file = st.file_uploader("📷 Upload an image", type=["jpg", "jpeg", "png"], key="cnn_upload")
+
+    if uploaded_file:
+        img = Image.open(uploaded_file).convert('RGB')
+        st.image(img, caption='Uploaded Leaf Image', use_column_width=True)
+
+        img = img.resize(IMAGE_SIZE)
+        img_array = np.array(img) / 255.0
+        img_array = np.expand_dims(img_array, axis=0)
+
+        prediction = cnn_model.predict(img_array)
+        predicted_class = CLASS_LABELS[np.argmax(prediction)]
+        confidence = np.max(prediction)
+
+        st.markdown(f"### ✅ Prediction: **{predicted_class}**")
+        st.markdown(f"**Confidence:** {confidence:.2%}")
+        
 # ==== VAE Model Page ====
 elif selected == "VAE Model":
     st.title("🌿 Plant Disease Classification (VAE-based Model)")
