@@ -15,8 +15,8 @@ import gdown
 
 # ==== Imports from folders ====
 from VIT.vit_model import ViTForClassfication
-from  (VAE+MLP).variational_autoencoder import VariationalAutoEncoder
-from (VAE+MLP).classifier import Classifier
+from  VAE_MLP.variational_autoencoder import VariationalAutoEncoder
+from VAE_MLP.classifier import Classifier
 
 # ==== Common Settings ====
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -126,8 +126,8 @@ elif selected == "VAE Model":
     def load_vae_models():
         vae = VariationalAutoEncoder(in_channels=3).to(device)
         clf = Classifier(in_features=30).to(device)
-        vae.load_state_dict(torch.load("VAE+MLP/vae_weights.pth", map_location=device))
-        clf.load_state_dict(torch.load("VAE+MLP/classifier_vae_weights.pth", map_location=device))
+        vae.load_state_dict(torch.load("VAE_MLP/vae_weights.pth", map_location=device))
+        clf.load_state_dict(torch.load("VAE_MLP/classifier_vae_weights.pth", map_location=device))
         vae.eval(); clf.eval()
         return vae, clf
 
