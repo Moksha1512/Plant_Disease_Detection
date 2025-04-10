@@ -126,8 +126,8 @@ elif selected == "VAE Model":
     def load_vae_models():
         vae = VariationalAutoEncoder(in_channels=3).to(device)
         clf = Classifier(in_features=30).to(device)
-        vae.load_state_dict(torch.load("VAE_MLP/vae_weights.pth", map_location=device))
-        clf.load_state_dict(torch.load("VAE_MLP/classifier_vae_weights.pth", map_location=device))
+        vae.load_state_dict(torch.load("vae_weights.pth", map_location=device))
+        clf.load_state_dict(torch.load("classifier_vae_weights.pth", map_location=device))
         vae.eval(); clf.eval()
         return vae, clf
 
