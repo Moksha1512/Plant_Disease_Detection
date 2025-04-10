@@ -33,6 +33,7 @@ def upload_image(key=None):
     file = st.file_uploader("\U0001F4F7 Upload an image", type=["jpg", "jpeg", "png"], key=key)
     if file:
         image = Image.open(file).convert("RGB")
+        image = image.resize((256, 256))  # Reduce image size for efficiency
         st.image(image, caption="Uploaded Image", use_container_width=True)
         return image
     return None
