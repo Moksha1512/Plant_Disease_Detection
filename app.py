@@ -14,9 +14,9 @@ import torch.nn as nn
 import gdown
 
 # ==== Imports from folders ====
-from Plant_Disease_Detection.vit_model import ViTForClassfication
-from cv_streamlit.variational_autoencoder import VariationalAutoEncoder
-from cv_streamlit.classifier import Classifier
+from VIT.vit_model import ViTForClassfication
+from VAE+MLP.variational_autoencoder import VariationalAutoEncoder
+from VAE+MLP.classifier import Classifier
 
 # ==== Common Settings ====
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
