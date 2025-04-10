@@ -33,7 +33,8 @@ def upload_image(key=None):
     file = st.file_uploader("\U0001F4F7 Upload an image", type=["jpg", "jpeg", "png"], key=key)
     if file:
         image = Image.open(file).convert("RGB")
-        st.image(image, caption="Uploaded Image", use_container_width=False, width=300)
+        image = image.resize((256, 256))  # Reduce image size for efficiency
+        st.image(image, caption="Uploaded Image", use_container_width=False, width=300)  # Reduced display size
         return image
     return None
 
@@ -63,7 +64,7 @@ if selected == "ViT Model":
         vit_model, vit_encoder = load_vit_model()
 
     image = upload_image("vit_upload")
-    if image and st.button("\U0001F50D Classify with ViT"):
+    if image:
         transform = transforms.Compose([
             transforms.Resize((64, 64)), transforms.ToTensor(),
             transforms.Normalize((0.485, 0.456, 0.406), (0.229, 0.224, 0.225))
@@ -131,7 +132,7 @@ elif selected == "VAE Model":
         vae, classifier = load_vae_models()
 
     image = upload_image("vae_upload")
-    if image and st.button("\U0001F50D Classify with VAE"):
+    if image:
         transform = transforms.Compose([transforms.Resize((64, 64)), transforms.ToTensor()])
         input_tensor = transform(image).unsqueeze(0).to(device)
 
@@ -169,6 +170,6 @@ elif selected == "SIFT + GMM Model":
         return cluster_class_mapping.get(cluster, "Unknown")
 
     image = upload_image("sift_gmm_upload")
-    if image and st.button("\U0001F50D Classify with GMM"):
+    if image:
         pred = predict_gmm(np.array(image))
         st.success(f"\U0001F9E0 **Predicted Class**: {pred}")
