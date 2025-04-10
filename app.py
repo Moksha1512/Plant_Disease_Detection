@@ -165,8 +165,8 @@ elif selected == "VAE Model":
                 output = classifier(encoded)
                 pred_class = torch.argmax(output, dim=1).item()
                 st.success(f"🧠 Predicted Disease: **{class_names[pred_class]}**")
-                
-   # ==== SIFT + GMM Model Page ====
+
+# ==== SIFT + GMM Model Page ====
 elif selected == "SIFT + GMM Model":
     st.title("🧠 SIFT + GMM Image Classification")
 
