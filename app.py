@@ -168,7 +168,7 @@ elif selected == "VAE Model":
 
 # ==== SIFT + GMM Model Page ====
 elif selected == "SIFT + GMM Model":
-    st.title("\U0001F9E0 SIFT + GMM Image Classification")
+    st.title("\U0001F33F Plant Disease Classification (SIFT + GMM Image Classification)")
 
     @st.cache_resource
     def load_sift_gmm():
