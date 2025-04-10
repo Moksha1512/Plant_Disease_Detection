@@ -57,10 +57,10 @@ if selected == "ViT Model":
     @st.cache_resource
     def load_vit_model():
         model = ViTForClassfication(config)
-        checkpoint = torch.load("Plant_Disease_Detection/plant_disease_vit_checkpoint_epoch_26.pt", map_location=device)
+        checkpoint = torch.load("VIT/plant_disease_vit_checkpoint_epoch_26.pt", map_location=device)
         model.load_state_dict(checkpoint.get("model_state_dict", checkpoint), strict=False)
         model.to(device).eval()
-        encoder = joblib.load("Plant_Disease_Detection/label_encoder.pkl")
+        encoder = joblib.load("VIT/label_encoder.pkl")
         return model, encoder
 
     with st.spinner("Loading ViT model..."):
@@ -126,8 +126,8 @@ elif selected == "VAE Model":
     def load_vae_models():
         vae = VariationalAutoEncoder(in_channels=3).to(device)
         clf = Classifier(in_features=30).to(device)
-        vae.load_state_dict(torch.load("cv_streamlit/vae_weights.pth", map_location=device))
-        clf.load_state_dict(torch.load("cv_streamlit/classifier_vae_weights.pth", map_location=device))
+        vae.load_state_dict(torch.load("VAE+MLP/vae_weights.pth", map_location=device))
+        clf.load_state_dict(torch.load("VAE+MLP/classifier_vae_weights.pth", map_location=device))
         vae.eval(); clf.eval()
         return vae, clf
 
