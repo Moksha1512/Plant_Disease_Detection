@@ -9,6 +9,9 @@ import os
 from torchvision import transforms
 import cv2
 from tensorflow.keras.preprocessing.sequence import pad_sequences
+import torchvision.models as models
+import torch.nn as nn
+import gdown
 
 # ==== Imports from folders ====
 from Plant_Disease_Detection.vit_model import ViTForClassfication
@@ -23,8 +26,8 @@ st.set_page_config(page_title="Plant Disease Detection App", layout="wide")
 with st.sidebar:
     selected = option_menu(
         menu_title="Navigation",
-        options=["ViT Model", "VAE Model", "CNN+Attention Model", "SIFT + GMM Model"],
-        icons=["activity", "cpu", "image", "bounding-box"],
+        options=["ViT Model", "VAE Model", "CNN+Attention Model", "SIFT + GMM Model", "ResNet Model"],
+        icons=["activity", "cpu", "image", "bounding-box", "database"],
         default_index=0,
     )
 
@@ -173,3 +176,41 @@ elif selected == "SIFT + GMM Model":
     if image:
         pred = predict_gmm(np.array(image))
         st.success(f"\U0001F9E0 **Predicted Class**: {pred}")
+
+# ==== ResNet Model Page ====
+elif selected == "ResNet Model":
+    st.title("\U0001F33F Plant Disease Classification (ResNet Model)")
+
+    @st.cache_resource
+    def load_resnet():
+        url = "https://drive.google.com/uc?id=1DEtyePl-vgjj-qvZ_xeRz0jXipqoX35W"
+        output = "plant_disease_resnet50.pth"
+        if not os.path.exists(output):
+            gdown.download(url, output, quiet=False)
+
+        labels = ['Pepper__bell___Bacterial_spot', 'Pepper__bell___healthy',
+           'Potato___Early_blight', 'Potato___Late_blight',
+           'Potato___healthy', 'Tomato_Bacterial_spot', 'Tomato_Early_blight',
+           'Tomato_Late_blight', 'Tomato_Leaf_Mold', 'Tomato_Septoria_leaf_spot',
+           'Tomato_Spider_mites_Two_spotted_spider_mite', 'Tomato__Target_Spot',
+           'Tomato__Tomato_YellowLeaf__Curl_Virus', 'Tomato__Tomato_mosaic_virus',
+           'Tomato_healthy']
+
+        model = models.resnet50(weights=None)
+        model.fc = nn.Sequential(nn.Dropout(0.01), nn.Linear(model.fc.in_features, len(labels)))
+        model.load_state_dict(torch.load(output, map_location=device))
+        model.to(device).eval()
+        return model, labels
+
+    with st.spinner("Loading ResNet model..."):
+        resnet_model, resnet_labels = load_resnet()
+
+    image = upload_image("resnet_upload")
+    if image:
+        transform = transforms.Compose([transforms.Resize((224, 224)), transforms.ToTensor()])
+        input_tensor = transform(image).unsqueeze(0).to(device)
+
+        with torch.no_grad():
+            output = resnet_model(input_tensor)
+            pred = torch.argmax(output, 1).item()
+            st.success(f"\U0001F9E0 **Predicted Disease**: {resnet_labels[pred]}")
