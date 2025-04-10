@@ -15,8 +15,8 @@ import gdown
 
 # ==== Imports from folders ====
 from VIT.vit_model import ViTForClassfication
-from VAE+MLP.variational_autoencoder import VariationalAutoEncoder
-from VAE+MLP.classifier import Classifier
+from  (VAE+MLP).variational_autoencoder import VariationalAutoEncoder
+from (VAE+MLP).classifier import Classifier
 
 # ==== Common Settings ====
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
