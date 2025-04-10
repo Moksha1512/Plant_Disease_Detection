@@ -23,7 +23,7 @@ st.set_page_config(page_title="Plant Disease Detection App", layout="wide")
 with st.sidebar:
     selected = option_menu(
         menu_title="Navigation",
-        options=["ViT Model", "VAE Model", "CNN+Attention Model", "SIFT + KMeans Model"],
+        options=["ViT Model", "VAE Model", "CNN+Attention Model", "SIFT + GMM Model"],
         icons=["activity", "cpu", "image", "bounding-box"],
         default_index=0,
     )
@@ -165,20 +165,20 @@ elif selected == "VAE Model":
                 output = classifier(encoded)
                 pred_class = torch.argmax(output, dim=1).item()
                 st.success(f"🧠 Predicted Disease: **{class_names[pred_class]}**")
-
-# ==== SIFT + KMeans Model Page ====
-elif selected == "SIFT + KMeans Model":
-    st.title("🧠 SIFT + KMeans Image Classification")
+                
+# ==== SIFT + GMM Model Page ====
+elif selected == "SIFT + GMM Model":
+    st.title("🧠 SIFT + GMM Image Classification")
 
     @st.cache_resource
-    def load_sift_kmeans():
+    def load_sift_gmm():
         scaler = joblib.load('sift+kmeans/scaler.pkl')
         pca = joblib.load('sift+kmeans/pca_transform.pkl')
-        kmeans_model = joblib.load('sift+kmeans/kmeans_model.pkl')
+        gmm_model = joblib.load('sift+kmeans/gmm_model.pkl')
         cluster_class_mapping = joblib.load('sift+kmeans/cluster_class_mapping.pkl')
-        return scaler, pca, kmeans_model, cluster_class_mapping
+        return scaler, pca, gmm_model, cluster_class_mapping
 
-    scaler, pca, kmeans_model, cluster_class_mapping = load_sift_kmeans()
+    scaler, pca, gmm_model, cluster_class_mapping = load_sift_gmm()
     sift = cv2.SIFT_create(nfeatures=100)
     max_length = 100
 
@@ -193,16 +193,17 @@ elif selected == "SIFT + KMeans Model":
         flat = padded.reshape((1, -1))
         scaled = scaler.transform(flat)
         reduced = pca.transform(scaled)
-        predicted_cluster = kmeans_model.predict(reduced)[0]
+        predicted_cluster = gmm_model.predict(reduced)[0]
         return cluster_class_mapping.get(predicted_cluster, "Unknown")
 
-    uploaded_file = st.file_uploader("📷 Upload an image", type=["jpg", "jpeg", "png"], key="sift_upload")
+    uploaded_file = st.file_uploader("📷 Upload an image", type=["jpg", "jpeg", "png"], key="sift_gmm_upload")
 
     if uploaded_file:
         image = Image.open(uploaded_file).convert("RGB")
         st.image(image, caption="Uploaded Image", use_container_width=True)
 
-        image_np = np.array(image)
-        pred = predict_class_from_image(image_np)
+        if st.button("🔍 Classify with GMM"):
+            image_np = np.array(image)
+            pred = predict_class_from_image(image_np)
+            st.success(f"🧠 Predicted Class: **{pred}**")
 
-        st.success(f"🧠 Predicted Class: **{pred}**")
