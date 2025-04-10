@@ -57,7 +57,7 @@ if selected == "ViT Model":
     @st.cache_resource
     def load_vit_model():
         model = ViTForClassfication(config)
-        checkpoint = torch.load("VIT/plant_disease_vit_checkpoint_epoch_26.pt", map_location=device)
+        checkpoint = torch.load("plant_disease_vit_checkpoint_epoch_26.pt", map_location=device)
         model.load_state_dict(checkpoint.get("model_state_dict", checkpoint), strict=False)
         model.to(device).eval()
         encoder = joblib.load("VIT/label_encoder.pkl")
