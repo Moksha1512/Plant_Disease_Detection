@@ -166,7 +166,7 @@ elif selected == "VAE Model":
                 pred_class = torch.argmax(output, dim=1).item()
                 st.success(f"🧠 Predicted Disease: **{class_names[pred_class]}**")
                 
-# ==== SIFT + GMM Model Page ====
+   # ==== SIFT + GMM Model Page ====
 elif selected == "SIFT + GMM Model":
     st.title("🧠 SIFT + GMM Image Classification")
 
@@ -201,9 +201,8 @@ elif selected == "SIFT + GMM Model":
     if uploaded_file:
         image = Image.open(uploaded_file).convert("RGB")
         st.image(image, caption="Uploaded Image", use_container_width=True)
+        image_np = np.array(image)
 
         if st.button("🔍 Classify with GMM"):
-            image_np = np.array(image)
             pred = predict_class_from_image(image_np)
             st.success(f"🧠 Predicted Class: **{pred}**")
-
