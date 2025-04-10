@@ -30,7 +30,7 @@ with st.sidebar:
 
 # ==== ViT Model Page ====
 if selected == "ViT Model":
-    st.title("🌿 Plant Disease Classification (ViT Model)")
+    st.title("\U0001F33F Plant Disease Classification (ViT Model)")
 
     config = {
         "patch_size": 4,
@@ -64,13 +64,13 @@ if selected == "ViT Model":
         "Plant_Disease_Detection/label_encoder.pkl"
     )
 
-    uploaded_file = st.file_uploader("📷 Upload an image", type=["jpg", "jpeg", "png"])
+    uploaded_file = st.file_uploader("\U0001F4F7 Upload an image", type=["jpg", "jpeg", "png"])
 
     if uploaded_file:
         image = Image.open(uploaded_file).convert("RGB")
         st.image(image, caption="Uploaded Image", use_container_width=True)
 
-        if st.button("🔍 Classify with ViT"):
+        if st.button("\U0001F50D Classify with ViT"):
             transform = transforms.Compose([
                 transforms.Resize((64, 64)),
                 transforms.ToTensor(),
@@ -83,11 +83,11 @@ if selected == "ViT Model":
                 probs = torch.nn.functional.softmax(logits, dim=1)
                 _, pred_idx = torch.max(probs, 1)
                 label = vit_encoder.inverse_transform(pred_idx.cpu().numpy())[0]
-            st.success(f"🧠 Predicted Disease: **{label}**")
+            st.success(f"\U0001F9E0 Predicted Disease: **{label}**")
 
 # ==== CNN + Attention Page ====
 elif selected == "CNN+Attention Model":
-    st.title("🌿 Plant Disease Classification (CNN + Attention)")
+    st.title("\U0001F33F Plant Disease Classification (CNN + Attention)")
 
     CLASS_LABELS = [
         'Pepper__bell___Bacterial_spot', 'Pepper__bell___healthy', 'Potato___Early_blight', 'Potato___Late_blight',
@@ -105,7 +105,7 @@ elif selected == "CNN+Attention Model":
 
     cnn_model = load_tf_model()
 
-    uploaded_file = st.file_uploader("📷 Upload an image", type=["jpg", "jpeg", "png"], key="cnn_upload")
+    uploaded_file = st.file_uploader("\U0001F4F7 Upload an image", type=["jpg", "jpeg", "png"], key="cnn_upload")
 
     if uploaded_file:
         img = Image.open(uploaded_file).convert('RGB')
@@ -124,7 +124,7 @@ elif selected == "CNN+Attention Model":
 
 # ==== VAE Model Page ====
 elif selected == "VAE Model":
-    st.title("🌿 Plant Disease Classification (VAE-based Model)")
+    st.title("\U0001F33F Plant Disease Classification (VAE-based Model)")
 
     class_names = [
         'Tomato__Target_Spot', 'Tomato_Early_blight', 'Tomato_Leaf_Mold',
@@ -147,13 +147,13 @@ elif selected == "VAE Model":
 
     vae, classifier = load_vae_models()
 
-    uploaded_file = st.file_uploader("📷 Upload an image", type=["jpg", "jpeg", "png"], key="vae_upload")
+    uploaded_file = st.file_uploader("\U0001F4F7 Upload an image", type=["jpg", "jpeg", "png"], key="vae_upload")
 
     if uploaded_file:
         image = Image.open(uploaded_file).convert("RGB")
         st.image(image, caption="Uploaded Image", use_container_width=True)
 
-        if st.button("🔍 Classify with VAE"):
+        if st.button("\U0001F50D Classify with VAE"):
             transform = transforms.Compose([
                 transforms.Resize((64, 64)),
                 transforms.ToTensor(),
@@ -164,11 +164,11 @@ elif selected == "VAE Model":
                 encoded, _, _, _ = vae(input_tensor)
                 output = classifier(encoded)
                 pred_class = torch.argmax(output, dim=1).item()
-                st.success(f"🧠 Predicted Disease: **{class_names[pred_class]}**")
+                st.success(f"\U0001F9E0 Predicted Disease: **{class_names[pred_class]}**")
 
 # ==== SIFT + GMM Model Page ====
 elif selected == "SIFT + GMM Model":
-    st.title("🧠 SIFT + GMM Image Classification")
+    st.title("\U0001F9E0 SIFT + GMM Image Classification")
 
     @st.cache_resource
     def load_sift_gmm():
@@ -196,13 +196,13 @@ elif selected == "SIFT + GMM Model":
         predicted_cluster = gmm_model.predict(reduced)[0]
         return cluster_class_mapping.get(predicted_cluster, "Unknown")
 
-    uploaded_file = st.file_uploader("📷 Upload an image", type=["jpg", "jpeg", "png"], key="sift_gmm_upload")
+    uploaded_file = st.file_uploader("\U0001F4F7 Upload an image", type=["jpg", "jpeg", "png"], key="sift_gmm_upload")
 
     if uploaded_file:
         image = Image.open(uploaded_file).convert("RGB")
         st.image(image, caption="Uploaded Image", use_container_width=True)
         image_np = np.array(image)
 
-        if st.button("🔍 Classify with GMM"):
+        if st.button("\U0001F50D Classify with GMM"):
             pred = predict_class_from_image(image_np)
-            st.success(f"🧠 Predicted Class: **{pred}**")
+            st.success(f"\U0001F9E0 Predicted Class: **{pred}**")
