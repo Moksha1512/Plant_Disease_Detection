@@ -21,21 +21,21 @@ def load_trained_model():
 model = load_trained_model()
 
 label_dict = {
-    0: 'Apple___Black_rot',
-    1: 'Apple___healthy',
-    2: 'Corn_(maize)___Cercospora_leaf_spot Gray_leaf_spot',
-    3: 'Corn_(maize)___Common_rust_',
-    4: 'Corn_(maize)___healthy',
-    5: 'Grape___Black_rot',
-    6: 'Grape___healthy',
-    7: 'Potato___Early_blight',
-    8: 'Potato___Late_blight',
-    9: 'Potato___healthy',
-    10: 'Tomato_Bacterial_spot',
-    11: 'Tomato_Early_blight',
-    12: 'Tomato_healthy',
-    13: 'Tomato_Late_blight',
-    14: 'Tomato_Leaf_Mold'
+    0: 'Pepper_bell_Bacterial_spot',
+    1: 'Pepperbell__healthy',
+    2: 'Potato__Early_blight',
+    3: 'Potato__Late_blight',
+    4: 'Potato___healthy',
+    5: 'Tomato_Bacterial_spot',
+    6: 'Tomato_Early_blight',
+    7: 'Tomato_Late_blight',
+    8: 'Tomato_Leaf_Mold',
+    9: 'Tomato_Septoria_leaf_spot',
+    10: 'Tomato_Spider_mites_Two_spotted_spider_mite',
+    11: 'Tomato_Target_Spot',
+    12: 'TomatoTomato_YellowLeaf_Curl_Virus',
+    13: 'Tomato__Tomato_mosaic_virus',
+    14: 'Tomato_healthy'
 }
 
 st.title("🌿 Plant Disease Classifier (Transfer Learning - VGG16)")
